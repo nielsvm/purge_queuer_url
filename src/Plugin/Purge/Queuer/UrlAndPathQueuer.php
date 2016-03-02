@@ -17,7 +17,7 @@ use Drupal\purge\Plugin\Purge\Queuer\QueuerBase;
  *   id = "urlpath",
  *   label = @Translation("URL and path queuer"),
  *   description = @Translation("Queues URLs or paths to your Purge queue after building a URL database."),
- *   enable_by_default = false,
+ *   enable_by_default = true,
  *   configform = "\Drupal\purge_queuer_url\Form\ConfigurationForm",
  * )
  */

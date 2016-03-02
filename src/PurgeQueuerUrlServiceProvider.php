@@ -7,11 +7,12 @@
 
 namespace Drupal\purge_queuer_url;
 
+use Symfony\Component\DependencyInjection\Reference;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 
 /**
- * Wraps "http_middleware.page_cache" in our URL gathering substitute.
+ * Replaces "http_middleware.page_cache" with PageCacheUrlRegistrationWrapper.
  */
 class PurgeQueuerUrlServiceProvider implements ServiceModifierInterface {
 
@@ -19,14 +20,20 @@ class PurgeQueuerUrlServiceProvider implements ServiceModifierInterface {
    * {@inheritdoc}
    */
   public function alter(ContainerBuilder $container) {
-    // $container->removeDefinition('purge_queuer_url.queuer');
+    $service = $container->getDefinition('http_middleware.page_cache');
 
-      // http_middleware.purge_queuer_url_page_cache_wrapper:
-      //   class: Drupal\purge_queuer_url\StackMiddleware\PageCacheWrapper
-      //   arguments: ['@cache.render', '@page_cache_request_policy', '@page_cache_response_policy']
-      //   tags:
-      //     - { name: http_middleware, priority: 200, responder: true }
+    // Stop if 'http_middleware.page_cache' has been tampered with.
+    $core_middleware_class = 'Drupal\page_cache\StackMiddleware\PageCache';
+    $core_implementation_used = $service->getClass() == $core_middleware_class;
+    if (!$core_implementation_used) {
+      assert($core_implementation_used, "The 'http_middleware.page_cache' service points to '$core_middleware_class'.");
+      return;
+    }
 
+    // Replace the class and inject the config factory and database.
+    $service->setClass('Drupal\purge_queuer_url\StackMiddleware\PageCacheUrlRegistrationWrapper');
+    $service->addArgument(new Reference('config.factory'));
+    $service->addArgument(new Reference('database'));
   }
 
 }
