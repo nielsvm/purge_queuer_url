@@ -1,0 +1,13 @@
+ # Schema for the configuration files of the Url and path Queuer module.
+purge_queuer_url.settings:
+  type: config_object
+  label: 'Url and path Queuer settings.'
+  mapping:
+    # blacklist:
+    #   label: 'A list of tag prefixes that should not be queued.'
+    #   type: sequence
+    #   translatable: false
+    #   sequence:
+    #     type: string
+    #     label: 'Prefix string with which tags should not start with.'
+    #     translatable: false

@@ -1,0 +1,7 @@
+services:
+  purge_queuer_url.queuer:
+    class: Drupal\purge_queuer_url\UrlQueuer
+    tags:
+      - { name: cache_tags_invalidator }
+    calls:
+      - [setContainer, ['@service_container']]
