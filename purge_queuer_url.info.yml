@@ -1,0 +1,10 @@
+name: URL and path queuer
+type: module
+description: 'Queues URLs or paths to your Purge queue after building a URL database.'
+package: "Purge - queuers"
+version: VERSION
+core: 8.x
+dependencies:
+  - purge
+  - page_cache
+
