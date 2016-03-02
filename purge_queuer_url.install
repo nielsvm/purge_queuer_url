@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * @file
+ * Installation routines for the URL and path queuer module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function purge_queuer_url_schema() {
+  $schema['purge_queuer_url_tag'] = [
+    'description' => 'Cache tags previously sent out for cached pages.',
+    'fields' => [
+      'tagid' => [
+        'description' => 'Cache tag ID.',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ],
+      'tag' => [
+        'description' => 'Namespace-prefixed tag string.',
+        'type' => 'varchar_ascii',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+    ],
+    'primary key' => ['tagid'],
+  ];
+  $schema['purge_queuer_url_url'] = [
+    'description' => 'URLs for which the page cache rendered entries.',
+    'fields' => [
+      'urlid' => [
+        'description' => 'URL ID.',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ],
+      'url' => [
+        'description' => 'The fully qualified URL for which a page was rendered.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+    ],
+    'primary key' => ['urlid'],
+  ];
+  $schema['purge_queuer_url_urltag'] = [
+    'description' => 'Links rendered tags with rendered URLs.',
+    'fields' => [
+      'id' => [
+        'description' => 'Tag and URL combination ID.',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ],
+      'urlid' => array(
+        'description' => '{purge_queuer_url_url}.urlid.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'tagid' => array(
+        'description' => '{purge_queuer_url_tag}.tagid.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'tagid' => ['tagid'],
+    ],
+    'unique keys' => [
+      'tag_url' => ['tagid', 'urlid']
+    ],
+    'foreign keys' => [
+      'tagid' => ['purge_queuer_url_tag' => 'tagid'],
+      'urlid' => ['purge_queuer_url_url' => 'urlid'],
+    ],
+  ];
+  return $schema;
+}
