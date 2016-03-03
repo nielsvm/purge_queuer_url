@@ -85,8 +85,7 @@ class UrlAndPathQueuer implements CacheTagsInvalidatorInterface, ContainerAwareI
     if (!$this->initialize()) {
       return;
     }
-    $this->invalidatedTags[] = 'block_view';
-    $tags=['node:33', 'block_view', 'node:57'];
+
     // Remove tags to lookup that have already been invalidated during runtime.
     foreach ($tags as $i => $tag) {
       if (in_array($tag, $this->invalidatedTags)) {
