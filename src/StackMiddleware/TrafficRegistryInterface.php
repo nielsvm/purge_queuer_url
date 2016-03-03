@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\purge_queuer_url\TrafficRegistryInterface.
+ * Contains \Drupal\purge_queuer_url\StackMiddleware\TrafficRegistryInterface.
  */
 
-namespace Drupal\purge_queuer_url;
+namespace Drupal\purge_queuer_url\StackMiddleware;
 
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;

@@ -6,6 +6,6 @@ services:
     calls:
       - [setContainer, ['@service_container']]
   purge_queuer_url.registry:
-    class: Drupal\purge_queuer_url\TrafficRegistry
+    class: Drupal\purge_queuer_url\StackMiddleware\TrafficRegistry
     public: true
     arguments: ['@database']

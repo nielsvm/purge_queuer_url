@@ -2,13 +2,14 @@
 
 /**
  * @file
- * Contains \Drupal\purge_queuer_url\TrafficRegistry.
+ * Contains \Drupal\purge_queuer_url\StackMiddleware\TrafficRegistry.
  */
 
-namespace Drupal\purge_queuer_url;
+namespace Drupal\purge_queuer_url\StackMiddleware;
 
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\Database\Connection;
+use Drupal\purge_queuer_url\StackMiddleware\TrafficRegistryInterface;
 
 /**
  * Provides a database-driven traffic registry with URLs and tags.

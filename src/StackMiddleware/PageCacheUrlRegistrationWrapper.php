@@ -15,7 +15,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\PageCache\RequestPolicyInterface;
 use Drupal\Core\PageCache\ResponsePolicyInterface;
 use Drupal\page_cache\StackMiddleware\PageCache;
-use Drupal\purge_queuer_url\TrafficRegistryInterface;
+use Drupal\purge_queuer_url\StackMiddleware\TrafficRegistryInterface;
 
 /**
  * Collects URLs for page cache misses.
