@@ -9,6 +9,7 @@ namespace Drupal\purge_queuer_url\StackMiddleware;
 
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\Condition;
 use Drupal\purge_queuer_url\StackMiddleware\TrafficRegistryInterface;
 
 /**
@@ -41,43 +42,24 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
       throw new \LogicException('Either $url_or_path or $path is left empty!');
     }
 
-    // Retrieve and/or add tags to the database and get its keys.
-    $tags = $this->getTagIds($tags);
+    // Build a list of tag IDs by adding and or selecting them from the db.
+    $tag_ids = ';' . implode(';', array_keys($this->getTagIds($tags)));
 
-    // Insert the URL or just retrieve the urlid its associated with.
-    $upsert = $this->connection->merge('purge_queuer_url_url')
-      ->insertFields(['url' => $url_or_path])
+    // Insert or update the URL with the shortened list of tag ids.
+    $fields = ['url' => $url_or_path, 'tag_ids' => $tag_ids];
+    $this->connection->merge('purge_queuer_url')
+      ->insertFields(['url' => $url_or_path, 'tag_ids' => $tag_ids])
+      ->updateFields(['url' => $url_or_path, 'tag_ids' => $tag_ids])
       ->key(['url' => $url_or_path])
       ->execute();
-    $urlid = (int) $this->connection->select('purge_queuer_url_url', 'u')
-      ->fields('u', ['urlid'])
-      ->condition('url', $url_or_path)
-      ->execute()
-      ->fetchField(0);
-
-    // Delete existing url->tags associations.
-    if (is_null($upsert)) {
-      $this->connection->delete('purge_queuer_url_urltag')
-      ->condition('urlid', $urlid)
-      ->execute();
-    }
-
-    // Add url->tags associations.
-    $insert = $this->connection->insert('purge_queuer_url_urltag')
-      ->fields(['urlid', 'tagid']);
-    foreach ($tags as $tagid => $tag) {
-      $insert->values(['urlid' => $urlid, 'tagid' => $tagid]);
-    }
-    $insert->execute();
   }
 
   /**
    * {@inheritdoc}
    */
   public function clear() {
+    $this->connection->delete('purge_queuer_url')->execute();
     $this->connection->delete('purge_queuer_url_tag')->execute();
-    $this->connection->delete('purge_queuer_url_url')->execute();
-    $this->connection->delete('purge_queuer_url_urltag')->execute();
   }
 
   /**
@@ -89,24 +71,30 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
     }
 
     // Retrieve tag IDs but without adding new ones.
-    $tags = array_keys($this->getTagIds($tags, FALSE));
+    $tag_ids = array_keys($this->getTagIds($tags, FALSE));
 
     // Don't return any URLs when no tags actually exist.
-    if (empty($tags)) {
+    if (empty($tag_ids)) {
       return [];
     }
 
-    // Perform a join and fetch the URLs.
-    $query = db_select('purge_queuer_url_url', 'u')->distinct();
-    $query->join('purge_queuer_url_urltag', 'ut', 'u.urlid = ut.urlid');
-    $query->condition('ut.tagid', $tags, 'IN')->fields('u', ['url']);
-    $result = $query->execute();
+    // Build a OR condition with LIKES on tag_ids for every tag.
+    $or = new Condition('OR');
+    foreach ($tag_ids as $tag_id) {
+      $syntax = '%;' . $this->connection->escapeLike($tag_id) . '%';
+      $or->condition('tag_ids', $syntax, 'LIKE');
+    }
 
-    // Put the results in a non-associative array.
+    // Perform the query and fetch the URLs from its resultset.
     $urls = [];
-    foreach ($result as $url) {
+    $results = db_select('purge_queuer_url', 'u')
+      ->fields('u', ['url'])
+      ->condition($or)
+      ->execute();
+    foreach ($results as $url) {
       $urls[] = $url->url;
     }
+
     return $urls;
   }
 
