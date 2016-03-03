@@ -95,7 +95,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
     // Define a clear button to allow clearing the registry.
     $form['actions']['clear'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Clear traffic registry'),
+      '#value' => $this->t('Clear traffic history'),
       '#weight' => 10,
       '#button_type' => 'danger'
     ];
