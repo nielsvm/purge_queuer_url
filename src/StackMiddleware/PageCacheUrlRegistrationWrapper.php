@@ -110,9 +110,23 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
    */
   protected function set(Request $request, Response $response, $expire, array $tags) {
     parent::set($request, $response, $expire, $tags);
-    if (count($tags)) {
-      $this->registry->add($this->generateUrlOrPathToRegister($request), $tags);
+
+    // Do not gather URLs without any tags.
+    if (!count($tags)) {
+      return;
     }
+
+    // Only collect URLs that set a max-age value that will externally cached.
+    if (!$response->getMaxAge()) {
+      return;
+    }
+
+    // Prevent entries like '/node/1/delete' and for instance forbidden paths.
+    if ($response->getStatusCode() !== 200) {
+      return;
+    }
+
+    $this->registry->add($this->generateUrlOrPathToRegister($request), $tags);
   }
 
 }
