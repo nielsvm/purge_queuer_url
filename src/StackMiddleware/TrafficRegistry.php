@@ -38,8 +38,8 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
    * {@inheritdoc}
    */
   public function add($url_or_path, array $tags) {
-    if (empty($tags) || empty($url_or_path)) {
-      throw new \LogicException('Either $url_or_path or $path is left empty!');
+    if (empty($tags)) {
+      throw new \LogicException('$tags cannot be empty!');
     }
 
     // Build a list of tag IDs by adding and or selecting them from the db.

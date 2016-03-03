@@ -98,7 +98,7 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
     $path = $request->getBaseUrl() . $request->getPathInfo() . $qs;
 
     if ($this->queue_paths) {
-      return $path;
+      return ltrim($path, '/');
     }
     else {
       return $scheme .'://'. $host . $path;

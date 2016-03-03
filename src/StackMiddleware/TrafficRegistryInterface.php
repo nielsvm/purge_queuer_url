@@ -24,7 +24,7 @@ interface TrafficRegistryInterface extends ServiceProviderInterface, ServiceModi
   *   Unassociative array with cache tags associated with the URL or path.
   *
   * @throws \LogicException
-  *   Thrown when $url_or_path or $tags is left empty.
+  *   Thrown when $tags is empty.
   */
   public function add($url_or_path, array $tags);
 
@@ -40,7 +40,7 @@ interface TrafficRegistryInterface extends ServiceProviderInterface, ServiceModi
    *   Unassociative list of cache tags that belong to one or more URls/paths.
    *
    * @throws \LogicException
-   *   Thrown when $tags is left empty.
+   *   Thrown when $tags is empty.
    *
    * @return string[]
    *   Returns an array with URLs/paths associated with the tags.
