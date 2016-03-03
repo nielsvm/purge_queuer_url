@@ -1,4 +1,4 @@
-name: URL and path queuer
+name: URLs queuer
 type: module
 description: 'Queues URLs or paths to your Purge queue utilizing a traffic database.'
 package: "Purge - queuers"
