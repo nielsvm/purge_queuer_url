@@ -19,7 +19,7 @@ Those that remember the [cache expiration](https://www.drupal.org/project/expire
 * ``drush cset system.performance cache.page.max_age 31536000`` (year)
 * ``drush cache-rebuild`` to empty Drupal's page cache.
 
-To achieve accurate URL based cache invalidation, it is best to take a head start by training which _traffic registry_ that ``purge_queuer_url`` maintains:
+To achieve accurate URL based cache invalidation, it is best to take a head start by training the _traffic registry_ that ``purge_queuer_url`` maintains:
 
 ```
 wget -r -nd --delete-after -l100 --spider http://mydrupalsite/
