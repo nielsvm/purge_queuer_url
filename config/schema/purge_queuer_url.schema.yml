@@ -21,5 +21,5 @@ purge_queuer_url.settings:
       translatable: false
     scheme:
       type: string
-      label: 'The scheme to set with when scheme_override is true, e.g. 'http'.'
+      label: 'The scheme to set with when scheme_override is true, e.g. "http".'
       translatable: false

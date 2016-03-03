@@ -1,6 +1,6 @@
 services:
   purge_queuer_url.queuer:
-    class: Drupal\purge_queuer_url\UrlQueuer
+    class: Drupal\purge_queuer_url\Plugin\Purge\Queuer\UrlAndPathQueuer
     tags:
       - { name: cache_tags_invalidator }
     calls:

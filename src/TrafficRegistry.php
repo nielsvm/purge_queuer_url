@@ -90,6 +90,11 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
     // Retrieve tag IDs but without adding new ones.
     $tags = array_keys($this->getTagIds($tags, FALSE));
 
+    // Don't return any URLs when no tags actually exist.
+    if (empty($tags)) {
+      return [];
+    }
+
     // Perform a join and fetch the URLs.
     $query = db_select('purge_queuer_url_url', 'u')->distinct();
     $query->join('purge_queuer_url_urltag', 'ut', 'u.urlid = ut.urlid');
