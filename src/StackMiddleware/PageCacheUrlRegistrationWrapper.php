@@ -10,12 +10,12 @@ namespace Drupal\purge_queuer_url\StackMiddleware;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\PageCache\RequestPolicyInterface;
 use Drupal\Core\PageCache\ResponsePolicyInterface;
 use Drupal\page_cache\StackMiddleware\PageCache;
+use Drupal\purge_queuer_url\TrafficRegistryInterface;
 
 /**
  * Collects URLs for page cache misses.
@@ -23,9 +23,11 @@ use Drupal\page_cache\StackMiddleware\PageCache;
 class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInterface {
 
   /**
-   * @var \Drupal\Core\Database\Connection
+   * The traffic registry with the stored URLs and tags.
+   *
+   * @var \Drupal\purge_queuer_url\TrafficRegistryInterface
    */
-  protected $database;
+  protected $registry;
 
   /**
    * Whether to override the hostname (string value) or keep as is (false).
@@ -59,14 +61,14 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
    *   A policy rule determining the cacheability of a request.
    * @param \Drupal\Core\PageCache\ResponsePolicyInterface $response_policy
    *   A policy rule determining the cacheability of the response.
+   * @param \Drupal\purge_queuer_url\TrafficRegistryInterface $registry
+   *   The traffic registry with the stored URLs and tags.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Database\Connection $database
-   *   The active database connection.
    */
-  public function __construct(HttpKernelInterface $http_kernel, CacheBackendInterface $cache, RequestPolicyInterface $request_policy, ResponsePolicyInterface $response_policy, ConfigFactoryInterface $config_factory, Connection $database) {
+  public function __construct(HttpKernelInterface $http_kernel, CacheBackendInterface $cache, RequestPolicyInterface $request_policy, ResponsePolicyInterface $response_policy, TrafficRegistryInterface $registry, ConfigFactoryInterface $config_factory) {
     parent::__construct($http_kernel, $cache, $request_policy, $response_policy);
-    $this->database = $database;
+    $this->registry = $registry;
 
     // Take the configured settings from our configuration object.
     $settings = $config_factory->get('purge_queuer_url.settings');
@@ -108,7 +110,9 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
    */
   protected function set(Request $request, Response $response, $expire, array $tags) {
     parent::set($request, $response, $expire, $tags);
-    $url_or_path = $this->generateUrlOrPathToRegister($request);
+    if (count($tags)) {
+      $this->registry->add($this->generateUrlOrPathToRegister($request), $tags);
+    }
   }
 
 }

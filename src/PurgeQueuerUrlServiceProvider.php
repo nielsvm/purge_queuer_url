@@ -32,8 +32,8 @@ class PurgeQueuerUrlServiceProvider implements ServiceModifierInterface {
 
     // Replace the class and inject the config factory and database.
     $service->setClass('Drupal\purge_queuer_url\StackMiddleware\PageCacheUrlRegistrationWrapper');
+    $service->addArgument(new Reference('purge_queuer_url.registry'));
     $service->addArgument(new Reference('config.factory'));
-    $service->addArgument(new Reference('database'));
   }
 
 }

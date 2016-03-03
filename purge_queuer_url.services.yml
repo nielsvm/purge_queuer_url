@@ -5,3 +5,7 @@ services:
       - { name: cache_tags_invalidator }
     calls:
       - [setContainer, ['@service_container']]
+  purge_queuer_url.registry:
+    class: Drupal\purge_queuer_url\TrafficRegistry
+    public: true
+    arguments: ['@database']
