@@ -38,6 +38,9 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
    * {@inheritdoc}
    */
   public function add($url_or_path, array $tags) {
+    if (!$this->connection->schema()->tableExists('purge_queuer_url')) {
+      return;
+    }
     if (empty($tags)) {
       throw new \LogicException('$tags cannot be empty!');
     }
@@ -58,14 +61,21 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
    * {@inheritdoc}
    */
   public function clear() {
-    $this->connection->delete('purge_queuer_url')->execute();
-    $this->connection->delete('purge_queuer_url_tag')->execute();
+    if ($this->connection->schema()->tableExists('purge_queuer_url')) {
+      $this->connection->delete('purge_queuer_url')->execute();
+    }
+    if ($this->connection->schema()->tableExists('purge_queuer_url_tag')) {
+      $this->connection->delete('purge_queuer_url_tag')->execute();
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getUrls(array $tags) {
+    if (!$this->connection->schema()->tableExists('purge_queuer_url')) {
+      return [];
+    }
     if (empty($tags)) {
       throw new \LogicException('$tags cannot be empty!');
     }
