@@ -28,7 +28,7 @@ class ConfigurationFormTest extends QueuerConfigFormTestBase {
    *
    * @var string
    */
-  protected $plugin = 'coretags';
+  protected $plugin = 'urlpath';
 
   /**
    * The full class of the form being tested.
@@ -41,38 +41,34 @@ class ConfigurationFormTest extends QueuerConfigFormTestBase {
    * Test the blacklist section.
    */
   public function testFieldExistence() {
-    // $this->drupalLogin($this->admin_user);
-    // $this->drupalGet($this->route);
-    // // Assert its standard fields and values.
-    // $this->assertField('edit-blacklist-0');
-    // $this->assertRaw('config:');
-    // $this->assertField('edit-blacklist-1');
-    // $this->assertRaw('4xx-response');
-    // $this->assertField('edit-blacklist-3');
-    // $this->assertNoField('edit-blacklist-4');
-    // $this->assertText('Add prefix');
-    // $this->assertText('if you know what you are doing');
-    // // Test that direct configuration changes are reflected properly.
-    // $this->config('purge_queuer_url.settings')
-    //   ->set('blacklist', ['a', 'b', 'c', 'd'])
-    //   ->save();
-    // $this->drupalGet($this->route);
-    // $this->assertField('edit-blacklist-0');
-    // $this->assertField('edit-blacklist-1');
-    // $this->assertField('edit-blacklist-2');
-    // $this->assertField('edit-blacklist-3');
-    // $this->assertNoField('edit-blacklist-4');
-    // // Submit 1 valid and three empty values, test the re-rendered form.
-    // $form = $this->getFormInstance();
-    // $form_state = $this->getFormStateInstance();
-    // $form_state->addBuildInfo('args', [$this->formArgs]);
-    // $form_state->setValue('blacklist', ['testvalue', '', '', '']);
-    // $this->formBuilder->submitForm($form, $form_state);
-    // $this->assertEqual(0, count($form_state->getErrors()));
-    // $this->drupalGet($this->route);
-    // $this->assertRaw('testvalue');
-    // $this->assertField('edit-blacklist-0');
-    // $this->assertNoField('edit-blacklist-1');
+    $this->drupalLogin($this->admin_user);
+    $this->drupalGet($this->route);
+    // Assert the standard fields and their default values.
+    $this->assertField('edit-queue-paths');
+    $this->assertNoFieldChecked('edit-queue-paths');
+    $this->assertField('edit-host-override');
+    $this->assertNoFieldChecked('edit-host-override');
+    $this->assertField('edit-host');
+    $this->assertFieldById('edit-host', '');
+    $this->assertField('edit-scheme-override');
+    $this->assertNoFieldChecked('edit-scheme-override');
+    $this->assertField('edit-scheme');
+    $this->assertFieldById('edit-scheme', 'http');
+    $this->assertRaw('Clear traffic history');
+    // Test that direct configuration changes are reflected properly.
+    $this->config('purge_queuer_url.settings')
+      ->set('queue_paths', TRUE)
+      ->set('host_override', TRUE)
+      ->set('host', 'foobar.baz')
+      ->set('scheme_override', TRUE)
+      ->set('scheme', 'https')
+      ->save();
+    $this->drupalGet($this->route);
+    $this->assertFieldChecked('edit-queue-paths');
+    $this->assertFieldChecked('edit-host-override');
+    $this->assertFieldById('edit-host', 'foobar.baz');
+    $this->assertFieldChecked('edit-scheme-override');
+    $this->assertFieldById('edit-scheme', 'https');
   }
 
 }
