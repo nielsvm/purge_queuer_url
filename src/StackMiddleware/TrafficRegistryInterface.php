@@ -16,16 +16,16 @@ use Drupal\Core\DependencyInjection\ServiceModifierInterface;
 interface TrafficRegistryInterface extends ServiceProviderInterface, ServiceModifierInterface {
 
   /**
-  * Register a new URL or path with its associated cache tags at the registry.
-  *
-  * @param string $url_or_path
-  *   The URL or path string to register (may already exist).
-  * @param string[] $tags
-  *   Unassociative array with cache tags associated with the URL or path.
-  *
-  * @throws \LogicException
-  *   Thrown when $tags is empty.
-  */
+   * Register a new URL or path with its associated cache tags at the registry.
+   *
+   * @param string $url_or_path
+   *   The URL or path string to register (may already exist).
+   * @param string[] $tags
+   *   Unassociative array with cache tags associated with the URL or path.
+   *
+   * @throws \LogicException
+   *   Thrown when $tags is empty.
+   */
   public function add($url_or_path, array $tags);
 
   /**
