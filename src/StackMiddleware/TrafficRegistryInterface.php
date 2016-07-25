@@ -18,6 +18,11 @@ interface TrafficRegistryInterface extends ServiceProviderInterface, ServiceModi
   /**
    * Register a new URL or path with its associated cache tags at the registry.
    *
+   * @warning
+   *   Implementation specific contstraints - such as database field length -
+   *   might dismiss the URL being added. Although implementations should
+   *   prevent this from happening at all cost, it could happen.
+   *
    * @param string $url_or_path
    *   The URL or path string to register (may already exist).
    * @param string[] $tags

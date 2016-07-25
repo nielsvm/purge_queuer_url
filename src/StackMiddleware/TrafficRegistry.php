@@ -45,6 +45,14 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
       throw new \LogicException('$tags cannot be empty!');
     }
 
+    // Sometimes Drupal generates ridiculously long URLs that pass well over the
+    // VARCHAR max length of 255, for example with the ?redirect parameters. We
+    // dismiss these URLs here, as using bigger datatypes ain't worth the
+    // trade-off and would make this module even more expensive to use.
+    if (strlen($url_or_path) > 255) {
+      return;
+    }
+
     // Build a list of tag IDs by adding and or selecting them from the db.
     $tag_ids = ';' . implode(';', array_keys($this->getTagIds($tags)));
 
