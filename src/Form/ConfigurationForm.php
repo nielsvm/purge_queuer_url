@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\purge_queuer_url\Form\ConfigurationForm.
- */
-
 namespace Drupal\purge_queuer_url\Form;
 
 use Drupal\Core\Form\FormStateInterface;

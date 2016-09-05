@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\purge_queuer_url\Tests\ConfigurationFormTest.
- */
-
 namespace Drupal\purge_queuer_url\Tests;
 
 use Drupal\purge_ui\Tests\QueuerConfigFormTestBase;

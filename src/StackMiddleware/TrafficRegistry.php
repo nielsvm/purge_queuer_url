@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\purge_queuer_url\StackMiddleware\TrafficRegistry.
- */
-
 namespace Drupal\purge_queuer_url\StackMiddleware;
 
 use Drupal\Core\DependencyInjection\ServiceProviderBase;

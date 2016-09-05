@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\purge_queuer_url\PurgeQueuerUrlServiceProvider.
- */
-
 namespace Drupal\purge_queuer_url;
 
 use Symfony\Component\DependencyInjection\Reference;

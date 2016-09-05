@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\purge_queuer_url\Plugin\Purge\Queuer\UrlAndPathQueuer.
- */
-
 namespace Drupal\purge_queuer_url\Plugin\Purge\Queuer;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

@@ -1,10 +1,5 @@
 <?php
 
- /**
-  * @file
-  * Contains \Drupal\purge_queuer_url\Plugin\Purge\Queuer\UrlAndPathQueuerPlugin.
-  */
-
 namespace Drupal\purge_queuer_url\Plugin\Purge\Queuer;
 
 use Drupal\purge\Plugin\Purge\Queuer\QueuerInterface;
