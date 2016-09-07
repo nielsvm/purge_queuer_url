@@ -34,6 +34,13 @@ interface TrafficRegistryInterface extends ServiceProviderInterface, ServiceModi
   public function clear();
 
   /**
+   * Count the number of URLs in the database.
+   *
+   * @return int
+   */
+  public function countUrls();
+
+  /**
    * Collect URLs and paths associated with the given list of tags.
    *
    * @param string[] $tags

@@ -75,6 +75,20 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
   /**
    * {@inheritdoc}
    */
+  public function countUrls() {
+    if (!$this->connection->schema()->tableExists('purge_queuer_url')) {
+      return 0;
+    }
+    return (int)$this->connection->select('purge_queuer_url')
+      ->fields(NULL, ['field'])
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getUrls(array $tags) {
     if (!$this->connection->schema()->tableExists('purge_queuer_url')) {
       return [];
@@ -100,7 +114,7 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
 
     // Perform the query and fetch the URLs from its resultset.
     $urls = [];
-    $results = db_select('purge_queuer_url', 'u')
+    $results = $this->connection->select('purge_queuer_url', 'u')
       ->fields('u', ['url'])
       ->condition($or)
       ->execute();
