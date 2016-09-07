@@ -86,7 +86,7 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
    */
   protected function generateUrlOrPathToRegister(Request $request) {
     if (NULL !== $qs = $request->getQueryString()) {
-      $qs = '?'.$qs;
+      $qs = '?' . $qs;
     }
     $scheme = ($this->scheme == FALSE) ? $request->getScheme() : $this->scheme;
     $host = ($this->host == FALSE) ? $request->getHttpHost() : $this->host;

@@ -47,8 +47,8 @@ class ConfigurationForm extends QueuerConfigFormBase {
       '#states' => [
         'visible' => [
           ':input[name="queue_paths"]' => ['checked' => FALSE],
-        ]
-      ]
+        ],
+      ],
     ];
     $form['host'] = [
       '#type' => 'textfield',
@@ -57,9 +57,9 @@ class ConfigurationForm extends QueuerConfigFormBase {
       '#states' => [
         'visible' => [
           ':input[name="queue_paths"]' => ['checked' => FALSE],
-          ':input[name="host_override"]' => ['checked' => TRUE]
-        ]
-      ]
+          ':input[name="host_override"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['scheme_override'] = [
       '#title' => $this->t('Scheme'),
@@ -69,8 +69,8 @@ class ConfigurationForm extends QueuerConfigFormBase {
       '#states' => [
         'visible' => [
           ':input[name="queue_paths"]' => ['checked' => FALSE],
-        ]
-      ]
+        ],
+      ],
     ];
     $form['scheme'] = [
       '#type' => 'select',
@@ -82,9 +82,9 @@ class ConfigurationForm extends QueuerConfigFormBase {
       '#states' => [
         'visible' => [
           ':input[name="queue_paths"]' => ['checked' => FALSE],
-          ':input[name="scheme_override"]' => ['checked' => TRUE]
-        ]
-      ]
+          ':input[name="scheme_override"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     // Define a clear button to allow clearing the registry.
@@ -92,7 +92,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
       '#type' => 'submit',
       '#value' => $this->t('Clear traffic history'),
       '#weight' => 10,
-      '#button_type' => 'danger'
+      '#button_type' => 'danger',
     ];
     if ($this->isDialog($form, $form_state)) {
       $form['actions']['clear']['#ajax'] = ['callback' => '::submitFormClear'];

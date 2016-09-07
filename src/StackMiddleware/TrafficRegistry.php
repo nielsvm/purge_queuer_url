@@ -131,7 +131,7 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
     }
 
     // Define the closure that queries existing tags from the database.
-    $load_from_db = function(&$tags, &$ids) {
+    $load_from_db = function (&$tags, &$ids) {
       $db_results = $this->connection->select('purge_queuer_url_tag', 't')
       ->fields('t', ['tagid', 'tag'])
       ->condition('tag', $tags, 'IN')
