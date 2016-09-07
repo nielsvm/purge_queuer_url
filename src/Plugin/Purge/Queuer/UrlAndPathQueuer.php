@@ -37,10 +37,10 @@ class UrlAndPathQueuer implements CacheTagsInvalidatorInterface, ContainerAwareI
   protected $purgeQueue;
 
   /**
-  * The traffic registry with the stored URLs and tags.
-  *
-  * @var null|\Drupal\purge_queuer_url\TrafficRegistryInterface
-  */
+   * The traffic registry with the stored URLs and tags.
+   *
+   * @var null|\Drupal\purge_queuer_url\TrafficRegistryInterface
+   */
   protected $registry;
 
   /**
