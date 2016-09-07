@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\purge_queuer_url\StackMiddleware;
+namespace Drupal\purge_queuer_url;
 
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;

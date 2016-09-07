@@ -5,17 +5,21 @@ namespace Drupal\purge_queuer_url\StackMiddleware;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Cache\CacheableResponseInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\PageCache\RequestPolicyInterface;
-use Drupal\Core\PageCache\ResponsePolicyInterface;
-use Drupal\page_cache\StackMiddleware\PageCache;
-use Drupal\purge_queuer_url\StackMiddleware\TrafficRegistryInterface;
+use Drupal\purge_queuer_url\TrafficRegistryInterface;
 
 /**
- * Collects URLs for page cache misses.
+ * Collects URLs for all passing traffic.
  */
-class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInterface {
+class UrlRegistrar implements HttpKernelInterface {
+
+  /**
+   * The wrapped HTTP kernel.
+   *
+   * @var \Symfony\Component\HttpKernel\HttpKernelInterface
+   */
+  protected $httpKernel;
 
   /**
    * The traffic registry with the stored URLs and tags.
@@ -46,23 +50,17 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
   protected $queue_paths = NULL;
 
   /**
-   * Constructs a PageCacheUrlRegistrationWrapper object.
+   * Constructs a UrlRegistrar object.
    *
    * @param \Symfony\Component\HttpKernel\HttpKernelInterface $http_kernel
    *   The decorated kernel.
-   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
-   *   The cache bin.
-   * @param \Drupal\Core\PageCache\RequestPolicyInterface $request_policy
-   *   A policy rule determining the cacheability of a request.
-   * @param \Drupal\Core\PageCache\ResponsePolicyInterface $response_policy
-   *   A policy rule determining the cacheability of the response.
    * @param \Drupal\purge_queuer_url\TrafficRegistryInterface $registry
    *   The traffic registry with the stored URLs and tags.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
    */
-  public function __construct(HttpKernelInterface $http_kernel, CacheBackendInterface $cache, RequestPolicyInterface $request_policy, ResponsePolicyInterface $response_policy, TrafficRegistryInterface $registry, ConfigFactoryInterface $config_factory) {
-    parent::__construct($http_kernel, $cache, $request_policy, $response_policy);
+  public function __construct(HttpKernelInterface $http_kernel, TrafficRegistryInterface $registry, ConfigFactoryInterface $config_factory) {
+    $this->httpKernel = $http_kernel;
     $this->registry = $registry;
 
     // Take the configured settings from our configuration object.
@@ -74,6 +72,46 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
     if ($settings->get('scheme_override')) {
       $this->scheme = $settings->get('scheme');
     }
+  }
+
+  /**
+   * Decide whether to register this response.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   A Request object.
+   * @param \Symfony\Component\HttpFoundation\Response $response
+   *   A Response object.
+   *
+   * @return bool
+   */
+  protected function decide(Request $request, Response $response) {
+    if (!($response instanceof CacheableResponseInterface)) {
+      return FALSE;
+    }
+
+    // When page_cache is enabled, skip HITs to prevent running code twice.
+    if ($cached = $response->headers->get('X-Drupal-Cache')) {
+      if ($cached === 'HIT') {
+        return FALSE;
+      }
+    }
+
+    // Don't gather responses that aren't going to be useful.
+    if (!count($response->getCacheableMetadata()->getCacheTags())) {
+      return FALSE;
+    }
+
+    // Don't gather responses with dynamic elements in them.
+    if (!$response->getMaxAge()) {
+      return FALSE;
+    }
+
+    // Only allow ordinary responses, so prevent collecting 403's and redirects.
+    if ($response->getStatusCode() !== 200) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
   /**
@@ -103,25 +141,15 @@ class PageCacheUrlRegistrationWrapper extends PageCache implements HttpKernelInt
   /**
    * {@inheritdoc}
    */
-  protected function set(Request $request, Response $response, $expire, array $tags) {
-    parent::set($request, $response, $expire, $tags);
-
-    // Do not gather URLs without any tags.
-    if (!count($tags)) {
-      return;
+  public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
+    $response = $this->httpKernel->handle($request, $type, $catch);
+    if ($this->decide($request, $response)) {
+      $this->registry->add(
+        $this->generateUrlOrPathToRegister($request),
+        $response->getCacheableMetadata()->getCacheTags()
+      );
     }
-
-    // Only collect URLs that set a max-age value that will externally cached.
-    if (!$response->getMaxAge()) {
-      return;
-    }
-
-    // Prevent entries like '/node/1/delete' and for instance forbidden paths.
-    if ($response->getStatusCode() !== 200) {
-      return;
-    }
-
-    $this->registry->add($this->generateUrlOrPathToRegister($request), $tags);
+    return $response;
   }
 
 }
