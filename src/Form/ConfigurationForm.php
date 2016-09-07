@@ -5,9 +5,7 @@ namespace Drupal\purge_queuer_url\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\purge_ui\Form\QueuerConfigFormBase;
-use Drupal\purge_ui\Form\ReloadConfigFormCommand;
 
 /**
  * Configuration form for the Url and Path queuer.
@@ -36,7 +34,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
     $form['queue_paths'] = [
       '#title' => $this->t('Queue paths instead of URLs.'),
       '#type' => 'checkbox',
-      '#description' => $this->t("If checked this queues paths without the scheme and domain name. "),
+      '#description' => $this->t("If checked this queues paths without the scheme and domain name."),
       '#default_value' => $config->get('queue_paths'),
     ];
     $form['host_override'] = [
@@ -117,7 +115,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
     // Clear the traffic registry IF there are no ordinary form errors.
     if (!$form_state->getErrors()) {
       \Drupal::service('purge_queuer_url.registry')->clear();
-      drupal_set_message("The traffic registry has been cleared, your site needs to get regular traffic before it starts queueing URLs or paths again!");
+      drupal_set_message($this->t("The traffic registry has been cleared, your site needs to get regular traffic before it starts queueing URLs or paths again!"));
     }
 
     // Determine all the AJAX and non-AJAX logic depending on how we're called.

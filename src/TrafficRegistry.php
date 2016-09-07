@@ -54,8 +54,8 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
     // Insert or update the URL with the shortened list of tag ids.
     $fields = ['url' => $url_or_path, 'tag_ids' => $tag_ids];
     $this->connection->merge('purge_queuer_url')
-      ->insertFields(['url' => $url_or_path, 'tag_ids' => $tag_ids])
-      ->updateFields(['url' => $url_or_path, 'tag_ids' => $tag_ids])
+      ->insertFields($fields)
+      ->updateFields($fields)
       ->key(['url' => $url_or_path])
       ->execute();
   }
@@ -79,7 +79,7 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
     if (!$this->connection->schema()->tableExists('purge_queuer_url')) {
       return 0;
     }
-    return (int)$this->connection->select('purge_queuer_url')
+    return (int) $this->connection->select('purge_queuer_url')
       ->fields(NULL, ['field'])
       ->countQuery()
       ->execute()
@@ -147,9 +147,9 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
     // Define the closure that queries existing tags from the database.
     $load_from_db = function (&$tags, &$ids) {
       $db_results = $this->connection->select('purge_queuer_url_tag', 't')
-      ->fields('t', ['tagid', 'tag'])
-      ->condition('tag', $tags, 'IN')
-      ->execute();
+        ->fields('t', ['tagid', 'tag'])
+        ->condition('tag', $tags, 'IN')
+        ->execute();
       foreach ($db_results as $tag) {
         $ids[intval($tag->tagid)] = $tag->tag;
         unset($tags[array_search($tag->tag, $tags)]);

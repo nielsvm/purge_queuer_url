@@ -83,6 +83,7 @@ class UrlRegistrar implements HttpKernelInterface {
    *   A Response object.
    *
    * @return bool
+   *   Whether to register this response or not.
    */
   protected function decide(Request $request, Response $response) {
     if (!($response instanceof CacheableResponseInterface)) {
@@ -121,6 +122,7 @@ class UrlRegistrar implements HttpKernelInterface {
    *   A request object.
    *
    * @return string
+   *   The URL or path to register.
    */
   protected function generateUrlOrPathToRegister(Request $request) {
     if (NULL !== $qs = $request->getQueryString()) {
@@ -134,7 +136,7 @@ class UrlRegistrar implements HttpKernelInterface {
       return ltrim($path, '/');
     }
     else {
-      return $scheme .'://'. $host . $path;
+      return $scheme . '://' . $host . $path;
     }
   }
 
