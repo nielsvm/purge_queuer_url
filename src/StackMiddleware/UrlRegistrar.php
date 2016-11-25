@@ -29,6 +29,13 @@ class UrlRegistrar implements HttpKernelInterface {
   protected $registry;
 
   /**
+   * A list of string patterns that will not get registered.
+   *
+   * @var string[]
+   */
+  protected $blacklist;
+
+  /**
    * Whether to override the hostname (string value) or keep as is (false).
    *
    * @var false|string
@@ -65,6 +72,7 @@ class UrlRegistrar implements HttpKernelInterface {
 
     // Take the configured settings from our configuration object.
     $settings = $config_factory->get('purge_queuer_url.settings');
+    $this->blacklist = $settings->get('blacklist');
     $this->queue_paths = $settings->get('queue_paths');
     if ($settings->get('host_override')) {
       $this->host = $settings->get('host');
@@ -110,6 +118,14 @@ class UrlRegistrar implements HttpKernelInterface {
     // Only allow ordinary responses, so prevent collecting 403's and redirects.
     if ($response->getStatusCode() !== 200) {
       return FALSE;
+    }
+
+    // Check if there are blacklisted patterns in the URL.
+    $url = $this->generateUrlOrPathToRegister($request);
+    foreach ($this->blacklist as $needle) {
+      if (strpos($url, $needle) !== FALSE) {
+        return FALSE;
+      }
     }
 
     return TRUE;

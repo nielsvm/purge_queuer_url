@@ -3,3 +3,11 @@ host_override: false
 host: ''
 scheme_override: false
 scheme: 'http'
+blacklist:
+  - 'txn='
+  - 'gclid='
+  - 'dclid='
+  - 'utm_source='
+  - 'utm_campaign='
+  - 'utm_content='
+  - 'utm_medium='

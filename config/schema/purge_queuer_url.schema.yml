@@ -23,3 +23,11 @@ purge_queuer_url.settings:
       type: string
       label: 'The scheme to set with when scheme_override is true, e.g. "http".'
       translatable: false
+    blacklist:
+      label: 'A list of string patterns that will not get queued.'
+      type: sequence
+      translatable: false
+      sequence:
+        type: string
+        label: 'String that cannot be present in a fully qualified URL.'
+        translatable: false

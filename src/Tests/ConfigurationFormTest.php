@@ -34,6 +34,8 @@ class ConfigurationFormTest extends QueuerConfigFormTestBase {
 
   /**
    * Test the blacklist section.
+   *
+   * @TODO add tests for the blacklist.
    */
   public function testFieldExistence() {
     $this->drupalLogin($this->admin_user);
