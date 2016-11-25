@@ -214,7 +214,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
     // Clear the traffic registry IF there are no ordinary form errors.
     if (!$form_state->getErrors()) {
       \Drupal::service('purge_queuer_url.registry')->clear();
-      drupal_set_message($this->t("The traffic registry has been cleared, your site needs to get regular traffic before it starts queueing URLs or paths again!"));
+      drupal_set_message($this->t("The traffic registry has been cleared, your site needs to get regular traffic before it starts queueing URLs or paths again! Pages currently cached in Drupal's render cache won't be collected unless you clear those, but be careful doing that on a busy site!"));
     }
 
     // Determine all the AJAX and non-AJAX logic depending on how we're called.
