@@ -113,7 +113,7 @@ class UrlRegistrar implements HttpKernelInterface {
     }
 
     // Don't gather responses with dynamic elements in them.
-    if (!$response->getMaxAge()) {
+    if ($response->getMaxAge() < 1) {
       return NULL;
     }
 
