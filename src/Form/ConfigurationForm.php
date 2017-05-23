@@ -2,6 +2,7 @@
 
 namespace Drupal\purge_queuer_url\Form;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
@@ -244,6 +245,15 @@ class ConfigurationForm extends QueuerConfigFormBase {
       ->set('scheme', $form_state->getValue('scheme'))
       ->set('blacklist', $form_state->getValue('blacklist'))
       ->save();
+
+    // Changes to the blacklist inevitably affect what should be in the registry
+    // and what URLs should not be. Because already cached page cache responses
+    // aren't checked in UrlRegistrar::determine(), wipe the render cache.
+    foreach (Cache::getBins() as $service_id => $cache_backend) {
+      if ($service_id === 'render') {
+        $cache_backend->deleteAll();
+      }
+    }
   }
 
 }
