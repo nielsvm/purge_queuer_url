@@ -29,6 +29,14 @@ interface TrafficRegistryInterface extends ServiceProviderInterface, ServiceModi
   public function add($url_or_path, array $tags);
 
   /**
+   * Remove a URL or path from the registry.
+   *
+   * @param $url_or_path
+   *   The URL or path string to remove from the registry.
+   */
+  public function remove($url_or_path);
+
+  /**
    * Wipe out all gathered traffic information.
    */
   public function clear();

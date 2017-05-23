@@ -83,17 +83,19 @@ class UrlRegistrar implements HttpKernelInterface {
   }
 
   /**
-   * Decide whether to register this response.
+   * Determine what to do with the given response object.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   A Request object.
    * @param \Symfony\Component\HttpFoundation\Response $response
    *   A Response object.
    *
-   * @return bool
-   *   Whether to register this response or not.
+   * @return true|false|null
+   *   - NULL: Ignore the response, delete it from the registry if it exists.
+   *   - FALSE: Ignore the response, do not add to traffic registry.
+   *   - TRUE: Add the response to the traffic registry.
    */
-  protected function decide(Request $request, Response $response) {
+  protected function determine(Request $request, Response $response) {
     if (!($response instanceof CacheableResponseInterface)) {
       return FALSE;
     }
@@ -107,24 +109,24 @@ class UrlRegistrar implements HttpKernelInterface {
 
     // Don't gather responses that aren't going to be useful.
     if (!count($response->getCacheableMetadata()->getCacheTags())) {
-      return FALSE;
+      return NULL;
     }
 
     // Don't gather responses with dynamic elements in them.
     if (!$response->getMaxAge()) {
-      return FALSE;
+      return NULL;
     }
 
     // Only allow ordinary responses, so prevent collecting 403's and redirects.
     if ($response->getStatusCode() !== 200) {
-      return FALSE;
+      return NULL;
     }
 
     // Check if there are blacklisted patterns in the URL.
     $url = $this->generateUrlOrPathToRegister($request);
     foreach ($this->blacklist as $needle) {
       if (strpos($url, $needle) !== FALSE) {
-        return FALSE;
+        return NULL;
       }
     }
 
@@ -161,10 +163,16 @@ class UrlRegistrar implements HttpKernelInterface {
    */
   public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
     $response = $this->httpKernel->handle($request, $type, $catch);
-    if ($this->decide($request, $response)) {
+    $what_to_do = $this->determine($request, $response);
+    if ($what_to_do === TRUE) {
       $this->registry->add(
         $this->generateUrlOrPathToRegister($request),
         $response->getCacheableMetadata()->getCacheTags()
+      );
+    }
+    elseif (is_null($what_to_do)) {
+      $this->registry->remove(
+        $this->generateUrlOrPathToRegister($request)
       );
     }
     return $response;

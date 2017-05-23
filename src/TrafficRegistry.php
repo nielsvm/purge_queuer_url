@@ -63,6 +63,21 @@ class TrafficRegistry extends ServiceProviderBase implements TrafficRegistryInte
   /**
    * {@inheritdoc}
    */
+  public function remove($url_or_path) {
+    if (!$this->connection->schema()->tableExists('purge_queuer_url')) {
+      return;
+    }
+    if (empty(trim($url_or_path))) {
+      return;
+    }
+    $this->connection->delete('purge_queuer_url')
+      ->condition('url', $url_or_path)
+      ->execute();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function clear() {
     if ($this->connection->schema()->tableExists('purge_queuer_url')) {
       $this->connection->delete('purge_queuer_url')->execute();
