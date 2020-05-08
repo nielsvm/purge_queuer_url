@@ -1,7 +1,5 @@
-[//]: # ( clear&&curl -s -F input_files[]=@PROJECTPAGE.md -F from=markdown -F to=html http://c.docverter.com/convert|tail -n+11|head -n-2 )
-[//]: # ( curl -s -F input_files[]=@PROJECTPAGE.md -F from=markdown -F to=pdf http://c.docverter.com/convert>PROJECTPAGE.pdf )
-
-This module queues URLs or paths to your [Purge](https://www.drupal.org/project/purge) queue.
+This module queues URLs or paths to your
+[Purge](https://www.drupal.org/project/purge) queue.
 
 Drupal 8 introduces tag-based cache invalidation which is much more efficient
 than legacy URL or path based invalidation and leads to less processing and
@@ -16,8 +14,8 @@ Drupal invalidates a set of tags because someone edited a page, these tags are
 used to fetch URLs from the registry and are added to the Purge queue.
 
 ##### Accuracy
-Those that remember the [cache expiration](https://www.drupal.org/project/expire)
-module for Drupal 7 are familiar with the _side effects_ of some changes not
+Those that remember [cache expiration](https://www.drupal.org/project/expire)
+for Drupal 7 are familiar with the _side effects_ of some changes not
 being automatically detected. This module can guarantee very high accuracy since
 it simply leverages D8's highly innovative _tags based_ caching architecture,
 which is thoroughly covered by tests that cover edge cases most site builders
@@ -27,15 +25,20 @@ view block, like that one dynamic block placed on ``/contact`` that shows
 corporate press releases.
 
 ## Very important warning!
-This module isn't suited for everyone and *can bring your site down* if you're not careful!
+This module isn't suited for everyone and *can bring your site down* if you're
+not careful!
 
-Because it stores URLs for all of your traffic, sites with thousands of content items can end up creating a unsustainable large registry with *database strain* as ultimate consequence. If you're noticing that queries coming from this module are severely slowing down your website, the only alternatives you have are:
+Because it stores URLs for all of your traffic, sites with thousands of content
+items can end up creating a unsustainable large registry with *database strain*
+as ultimate consequence. If you're noticing that queries coming from this module
+are severely slowing down your website, the only alternatives you have are:
 
 1. Switch to a CDN that does support tag-based cache invalidation.
 2. Stay with the CDN, but:
   * Uninstall and stop using ``purge_queuer_url``.
   * Configure the CDN to override your caching policy at the edge.
-  * The override should set a reasonably short cache policy for all CDN-to-browser delivery.
+  * The override should set a reasonably short cache policy for all
+    CDN-to-browser delivery.
 
 ## Getting started
 
