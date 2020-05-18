@@ -1,8 +1,8 @@
 {
     "name": "drupal/purge_queuer_url",
     "type": "drupal-module",
-    "license": "GPL-2.0-or-later",
     "description": "Queues URLs or paths to your Purge queue utilizing a traffic database.",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Niels van Mourik",
@@ -15,13 +15,13 @@
         "drupal/purge": "^3.0.0-beta9"
     },
     "extra": {
+        "branch-alias": {
+            "dev-8.x-1.x": "1.x-dev"
+        },
         "drush": {
             "services": {
                 "drush.services.yml": "^10"
             }
-        },
-        "branch-alias": {
-            "dev-8.x-1.x": "1.x-dev"
         }
     }
 }
