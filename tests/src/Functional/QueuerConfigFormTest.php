@@ -2,14 +2,13 @@
 
 namespace Drupal\Tests\purge_queuer_url\Functional;
 
-use Drupal\Tests\purge_ui\Functional\QueuerConfigFormTestBase;
+use Drupal\purge_queuer_url\Form\ConfigurationForm;
+use Drupal\Tests\purge_ui\Functional\Form\Config\QueuerConfigFormTestBase;
 
 /**
  * Tests \Drupal\purge_queuer_url\Form\ConfigurationForm.
- *
- * @group purge
  */
-class ConfigurationFormTest extends QueuerConfigFormTestBase {
+class QueuerConfigFormTest extends QueuerConfigFormTestBase {
 
   /**
    * {@inheritdoc}
@@ -17,27 +16,26 @@ class ConfigurationFormTest extends QueuerConfigFormTestBase {
   public static $modules = ['purge_queuer_url'];
 
   /**
-   * The plugin ID for which the form tested is rendered for.
-   *
-   * @var string
+   * {@inheritdoc}
    */
-  protected $plugin = 'urlpath';
+  protected $pluginId = 'urlpath';
 
   /**
-   * The full class of the form being tested.
-   *
-   * @var string
+   * {@inheritdoc}
    */
-  protected $formClass = 'Drupal\purge_queuer_url\Form\ConfigurationForm';
+  protected $formClass = ConfigurationForm::class;
 
   /**
-   * Test the blacklist section.
-   *
-   * @TODO add tests for the blacklist.
+   * {@inheritdoc}
    */
-  public function testFieldExistence(): void {
+  protected $formId = 'purge_queuer_url.configuration_form';
+
+  /**
+   * {@inheritdoc}
+   */
+  public function testSaveConfigurationSubmit(): void {
     $this->drupalLogin($this->adminUser);
-    $this->drupalGet($this->route);
+    $this->drupalGet($this->getPath());
     // Assert the standard fields and their default values.
     $this->assertSession()->fieldExists('edit-queue-paths');
     $this->assertSession()->checkboxNotChecked('edit-queue-paths');
@@ -58,7 +56,7 @@ class ConfigurationFormTest extends QueuerConfigFormTestBase {
       ->set('scheme_override', TRUE)
       ->set('scheme', 'https')
       ->save();
-    $this->drupalGet($this->route);
+    $this->drupalGet($this->getPath());
     $this->assertSession()->checkboxChecked('edit-queue-paths');
     $this->assertSession()->checkboxChecked('edit-host-override');
     $this->assertSession()->fieldValueEquals('edit-host', 'foobar.baz');
