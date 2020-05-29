@@ -25,3 +25,6 @@ and this project adheres to
   paving the way for equal Drupal 9 quality with a single codebase.
 - **Improvement:** Tests pass and module tested on D9 (D9 readiness).
 - **Improvement:** Code quality has been brought up to date (D9 readiness).
+
+### Fixed
+- **Fixed:** Reimplemented the ``sql:sanitize`` plugin for modern Drush.
